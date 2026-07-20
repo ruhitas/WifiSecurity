@@ -25,6 +25,11 @@ awid/
 *_pre_*.docx
 *_draft.docx
 
+# Paper-editing helper scripts (not part of the project code)
+patch_paper_*.py
+scripts/build_turkce_ozet.py
+Access-Template*.docx
+
 # Local editor / agent
 .claude/
 
