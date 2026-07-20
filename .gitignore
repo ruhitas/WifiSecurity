@@ -22,8 +22,7 @@ CICIDS2018/
 awid/
 
 # Optional: paper backup drafts
-*_pre_review_fix.docx
-*_pre_round2.docx
+*_pre_*.docx
 *_draft.docx
 
 # Local editor / agent
