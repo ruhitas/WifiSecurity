@@ -1,0 +1,6 @@
+# Packet-capture stack (Phase 4).
+#   - scapy: 802.11 crafting/parsing + live sniff (live capture needs Npcap on
+#     Windows / libpcap on Linux, and a monitor-mode-capable NIC).
+#   - pyshark (optional): tshark/Wireshark-based dissection; requires Wireshark.
+scapy>=2.5,<2.7
+# pyshark>=0.6   # optional; needs tshark (Wireshark) installed

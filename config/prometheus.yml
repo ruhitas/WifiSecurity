@@ -1,0 +1,14 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # WIDS real-time monitor / pipeline services (run on the host, port 8000).
+  # host.docker.internal lets the Prometheus container reach the host process.
+  - job_name: wids
+    static_configs:
+      - targets: ["host.docker.internal:9464"]

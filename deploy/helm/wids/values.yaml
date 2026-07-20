@@ -1,0 +1,51 @@
+# Wireless IDS + AI Platform — Helm values (Phase 14)
+image:
+  repository: wids
+  tag: "0.14.0"
+  pullPolicy: IfNotPresent
+
+# Non-secret configuration (rendered into a ConfigMap). Point these at the
+# in-cluster or external data services.
+config:
+  WIDS_KAFKA_BOOTSTRAP: "kafka:9092"
+  WIDS_REDIS_URL: "redis://redis:6379/0"
+  WIDS_ES_URL: "https://elasticsearch:9200"
+  WIDS_ES_INDEX_PREFIX: "wids-"
+  WIDS_ES_VERIFY_CERTS: "false"
+  WIDS_MSSQL_DRIVER: "ODBC Driver 18 for SQL Server"
+  WIDS_MSSQL_SERVER: "mssql"
+  WIDS_MSSQL_DATABASE: "WirelesSecureDB"
+  WIDS_MSSQL_ENCRYPT: "no"
+  WIDS_MSSQL_TRUST_CERT: "yes"
+
+# Secrets (rendered into a Secret). Override with --set or a sealed secret;
+# never commit real values.
+secret:
+  WIDS_ES_PASSWORD: ""
+  WIDS_MSSQL_USER: ""
+  WIDS_MSSQL_PASSWORD: ""
+  WIDS_RABBITMQ_PASSWORD: ""
+
+# One entry per pipeline service; each becomes a Deployment (+ optional HPA).
+services:
+  feature-extractor:
+    replicas: 2
+    withMl: false
+    resources:
+      requests: { cpu: "250m", memory: "512Mi" }
+      limits:   { cpu: "1",    memory: "1Gi" }
+    hpa: { enabled: true, min: 2, max: 8, cpu: 70 }
+  inference:
+    replicas: 2
+    withMl: true
+    resources:
+      requests: { cpu: "500m", memory: "1Gi" }
+      limits:   { cpu: "2",    memory: "4Gi" }
+    hpa: { enabled: true, min: 2, max: 10, cpu: 70 }
+  response:
+    replicas: 1
+    withMl: false
+    resources:
+      requests: { cpu: "100m", memory: "256Mi" }
+      limits:   { cpu: "500m", memory: "512Mi" }
+    hpa: { enabled: false }

@@ -1,0 +1,150 @@
+# Wireless IDS + AI Platform — plain K8s manifests (Helm chart rendered with
+# default values). Apply directly with `kubectl apply -f deploy/k8s/` or use the
+# Helm chart in deploy/helm/wids for parameterized installs.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: wids
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wids-config
+  namespace: wids
+data:
+  WIDS_KAFKA_BOOTSTRAP: "kafka:9092"
+  WIDS_REDIS_URL: "redis://redis:6379/0"
+  WIDS_ES_URL: "https://elasticsearch:9200"
+  WIDS_ES_INDEX_PREFIX: "wids-"
+  WIDS_ES_VERIFY_CERTS: "false"
+  WIDS_MSSQL_DRIVER: "ODBC Driver 18 for SQL Server"
+  WIDS_MSSQL_SERVER: "mssql"
+  WIDS_MSSQL_DATABASE: "WirelesSecureDB"
+  WIDS_MSSQL_ENCRYPT: "no"
+  WIDS_MSSQL_TRUST_CERT: "yes"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: wids-secret
+  namespace: wids
+type: Opaque
+stringData:
+  WIDS_ES_PASSWORD: ""
+  WIDS_MSSQL_USER: ""
+  WIDS_MSSQL_PASSWORD: ""
+  WIDS_RABBITMQ_PASSWORD: ""
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wids-feature-extractor
+  namespace: wids
+  labels: { app.kubernetes.io/name: feature-extractor, app.kubernetes.io/part-of: wids }
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app.kubernetes.io/name: feature-extractor }
+  template:
+    metadata:
+      labels: { app.kubernetes.io/name: feature-extractor }
+    spec:
+      containers:
+        - name: feature-extractor
+          image: "wids:0.14.0"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: WIDS_SERVICE
+              value: "feature-extractor"
+          envFrom:
+            - configMapRef: { name: wids-config }
+            - secretRef: { name: wids-secret }
+          resources:
+            requests: { cpu: "250m", memory: "512Mi" }
+            limits:   { cpu: "1",    memory: "1Gi" }
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: wids-feature-extractor
+  namespace: wids
+spec:
+  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: wids-feature-extractor }
+  minReplicas: 2
+  maxReplicas: 8
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target: { type: Utilization, averageUtilization: 70 }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wids-inference
+  namespace: wids
+  labels: { app.kubernetes.io/name: inference, app.kubernetes.io/part-of: wids }
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app.kubernetes.io/name: inference }
+  template:
+    metadata:
+      labels: { app.kubernetes.io/name: inference }
+    spec:
+      containers:
+        - name: inference
+          image: "wids:0.14.0"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: WIDS_SERVICE
+              value: "inference"
+          envFrom:
+            - configMapRef: { name: wids-config }
+            - secretRef: { name: wids-secret }
+          resources:
+            requests: { cpu: "500m", memory: "1Gi" }
+            limits:   { cpu: "2",    memory: "4Gi" }
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: wids-inference
+  namespace: wids
+spec:
+  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: wids-inference }
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target: { type: Utilization, averageUtilization: 70 }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wids-response
+  namespace: wids
+  labels: { app.kubernetes.io/name: response, app.kubernetes.io/part-of: wids }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app.kubernetes.io/name: response }
+  template:
+    metadata:
+      labels: { app.kubernetes.io/name: response }
+    spec:
+      containers:
+        - name: response
+          image: "wids:0.14.0"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: WIDS_SERVICE
+              value: "response"
+          envFrom:
+            - configMapRef: { name: wids-config }
+            - secretRef: { name: wids-secret }
+          resources:
+            requests: { cpu: "100m", memory: "256Mi" }
+            limits:   { cpu: "500m", memory: "512Mi" }

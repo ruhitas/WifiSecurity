@@ -1,0 +1,40 @@
+# Environment / secrets
+.env
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Data / models / artefacts
+data/
+artifacts/
+*.pcap
+*.pcapng
+
+# Large external datasets (download separately; do NOT push to GitHub)
+AWID3_5csv/
+AWID3_archive/
+CICIDS/
+CICIDS2018/
+awid/
+
+# Optional: paper backup drafts
+*_pre_review_fix.docx
+*_pre_round2.docx
+*_draft.docx
+
+# Local editor / agent
+.claude/
+
+# Build / conversion by-products
+*.pdf
+!docs/**/*.pdf
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
