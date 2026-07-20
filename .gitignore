@@ -28,7 +28,9 @@ awid/
 # Paper-editing helper scripts (not part of the project code)
 patch_paper_*.py
 scripts/build_turkce_ozet.py
-Access-Template*.docx
+
+# Word documents (paper, template, drafts) stay local only
+*.docx
 
 # Local editor / agent
 .claude/
