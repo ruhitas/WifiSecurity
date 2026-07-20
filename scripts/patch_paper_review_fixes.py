@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DOCX = ROOT / "AWID3_Paper_IEEE_Access.docx"
 BACKUP = ROOT / "AWID3_Paper_IEEE_Access_pre_review_fix.docx"
 FEATURES = (ROOT / "config" / "leakage_controlled_features.txt").read_text(encoding="utf-8").strip().splitlines()
-REPO_URL = "https://github.com/ruhitas/awid3-leakage-aware-ids"
+REPO_URL = "https://github.com/ruhitas/WifiSecurity"
 
 REPLACEMENTS: list[tuple[str, str]] = [
     ("forty features", "thirty-four features"),

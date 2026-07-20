@@ -1,0 +1,9 @@
+# Core connectivity for the Wireless IDS dev environment (Phase 2).
+# Light dependencies used by the verification and bootstrap scripts.
+kafka-python==2.0.2
+redis==5.2.1
+elasticsearch>=9,<10
+pyodbc==5.2.0
+requests==2.32.3
+python-dotenv==1.0.1
+prometheus-client==0.21.0

@@ -1,0 +1,30 @@
+# Secrets / environment
+.env
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Datasets (obtain AWID3 separately; generated CSVs are large)
+AWID3_5csv/
+AWID3_archive/
+data/datasets/*.csv
+data/datasets/*.manifest.json
+!data/datasets/.gitkeep
+
+# Large / generated artifacts
+*.pcap
+*.pcapng
+*.pdf
+*.docx
+mlruns/
+artifacts/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

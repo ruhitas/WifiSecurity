@@ -32,7 +32,7 @@ def main() -> None:
             _set_text(
                 paragraph,
                 "REPRODUCIBILITY\n"
-                "Source code: https://github.com/ruhitas/awid3-leakage-aware-ids\n"
+                "Source code: https://github.com/ruhitas/WifiSecurity\n"
                 f"Feature list: {FEATURES_FILE} (34 fields).\n"
                 "Preprocessing, models, explainers and figure scripts are released with the "
                 "configuration, the leakage-control feature policy and the exact 34-feature list. "
